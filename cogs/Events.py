@@ -11,6 +11,8 @@ class Events(commands.Cog):
         print(
             f'Ready: {self.client.user} | Servers: {len(self.client.guilds)}')
 
+        await self.client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="test"))
+
     @commands.command()
     async def ping(self, ctx):
         await ctx.send('Pong!')
