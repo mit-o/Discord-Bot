@@ -35,11 +35,4 @@ for filename in os.listdir('cogs'):
             print("{} cannot be loaded. [{}]".format(
                 f'cogs.{filename[:-3]}', error))
 
-'''
-# status check
-@client.event
-async def on_ready(ctx):
-    print(f'{client.user} has connected to Discord!')
-
-'''
 client.run(TOKEN)
