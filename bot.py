@@ -1,11 +1,14 @@
 import discord
 import os
+import json
 from discord.ext import commands
-from dotenv import load_dotenv
 
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-client = commands.Bot(command_prefix='!')
+with open("config.json") as config_file:
+    config = json.load(config_file)
+    TOKEN = config["bot_token"]
+    PREFIX = config["bot_prefix"]
+
+client = commands.Bot(command_prefix=PREFIX)
 
 
 @client.command()
