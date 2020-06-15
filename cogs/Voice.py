@@ -4,6 +4,7 @@ import discord
 import youtube_dl
 
 from discord.ext import commands
+from unittest.mock import Mock
 
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ''
@@ -11,7 +12,7 @@ youtube_dl.utils.bug_reports_message = lambda: ''
 
 ytdl_format_options = {
     'format': 'bestaudio/best',
-    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
+    'outtmpl': 'cache/%(extractor)s-%(id)s-%(title)s.%(ext)s',
     'restrictfilenames': True,
     'noplaylist': True,
     'nocheckcertificate': True,
@@ -21,7 +22,8 @@ ytdl_format_options = {
     'no_warnings': True,
     'default_search': 'auto',
     # bind to ipv4 since ipv6 addresses cause issues sometimes
-    'source_address': '0.0.0.0'
+    'source_address': '0.0.0.0',
+    'cachedir': False
 }
 
 ffmpeg_options = {
