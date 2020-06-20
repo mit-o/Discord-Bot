@@ -4,7 +4,6 @@ import discord
 import youtube_dl
 
 from discord.ext import commands
-from unittest.mock import Mock
 
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ''
