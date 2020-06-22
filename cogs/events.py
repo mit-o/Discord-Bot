@@ -21,6 +21,7 @@ class Events(commands.Cog):
         print(
             f'Ready: {self.bot.user} | Servers: {len(self.bot.guilds)}')
         self.bot.loop.create_task(self.status_task())
+        self.bot.appinfo = await self.bot.application_info()
 
 
 def setup(bot):
