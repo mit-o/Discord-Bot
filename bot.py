@@ -9,7 +9,7 @@ with open("config.json") as config_file:
     PREFIX = config["bot_prefix"]
 
 bot = commands.Bot(command_prefix=PREFIX)
-
+bot.remove_command("help")
 
 @bot.command()
 async def load(ctx, extension):
