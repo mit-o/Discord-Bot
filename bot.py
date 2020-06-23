@@ -7,9 +7,11 @@ with open("config.json") as config_file:
     config = json.load(config_file)
     TOKEN = config["bot_token"]
     PREFIX = config["bot_prefix"]
+    COG_EXCEPT = config["cog_exception"]
 
 bot = commands.Bot(command_prefix=PREFIX)
 bot.remove_command("help")
+
 
 @bot.command()
 async def load(ctx, extension):
@@ -28,7 +30,7 @@ async def reload(ctx, extension):
 
 
 for filename in os.listdir('cogs'):
-    if filename.endswith('.py'):
+    if filename.endswith('.py') and not filename.__contains__('init'):
         try:
             bot.load_extension(f'cogs.{filename[:-3]}')
         except Exception as error:

@@ -59,6 +59,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def join(self, ctx, *, channel: discord.VoiceChannel):
+        """Tell bot to join specify voice channel"""
         if ctx.voice_bot is not None:
             return await ctx.voice_bot.move_to(channel)
 
@@ -66,6 +67,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def play(self, ctx, *, url):
+        """Play a song from URL"""
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop)
             ctx.voice_bot.play(player, after=lambda e: print(
@@ -75,6 +77,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def volume(self, ctx, volume: int):
+        """Change volume"""
         if ctx.voice_bot is None:
             return await ctx.send("Not connected to a voice channel.")
 
@@ -83,6 +86,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def stop(self, ctx):
+        """Stop the music"""
         await ctx.voice_bot.disconnect()
 
     @play.before_invoke

@@ -1,25 +1,12 @@
 import discord
 from discord.ext import commands
+from bot import COG_EXCEPT
 
 
-class ErrorCog(commands.Cog, name='Help'):
+class CustomHelp(commands.Cog, name='Help'):
+
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        try:
-            if hasattr(ctx.command, 'on_error'):
-                return
-            else:
-                embed = discord.Embed(
-                    title=f'Error in {ctx.command}', description=f'`{ctx.command.qualified_name} {ctx.command.signature}` \n{error}', color=0x43788)
-                await ctx.send(embed=embed)
-                await ctx.message.add_reaction(emoji='❔')
-        except:
-            embed = discord.Embed(
-                title=f'Error in {ctx.command}', description=f'{error}', color=0x43788)
-            await ctx.send(embed=embed)
 
     @commands.command()
     async def help(self, ctx, *cog):
@@ -29,27 +16,35 @@ class ErrorCog(commands.Cog, name='Help'):
 
             embed = discord.Embed(
                 description="""
-                To view the commands in each group use:
-                ```!help <group>```
+                To view what certain command do, use:
+                ***!help <command>***
                 """,
                 color=0x437840
             )
             embed.set_author(name="Turtle's commands.",
                              icon_url=self.bot.user.avatar_url)
             embed.set_thumbnail(url=self.bot.user.avatar_url)
-            embed.set_footer(text=f"Author: {self.bot.appinfo.owner}")
+            embed.set_footer(text=f"Author: {self.bot.appinfo.owner}",
+                             icon_url='https://cdn.discordapp.com/attachments/596341948705407040/724748657924112454/610021821856743444.gif')
 
-            cogs_desc = ''
             for x in self.bot.cogs:
-                cogs_desc += ('**{}** - {}'.format(x,
-                                                   self.bot.cogs[x].__doc__)+'\n')
-            embed.add_field(
-                name='Cogs', value=cogs_desc[0:len(cogs_desc)-1], inline=False)
+                if x in COG_EXCEPT or len(self.bot.cogs[x].get_commands()) == 0:
+                    pass
+                else:
+                    cogs_cmds = self.bot.cogs[x].get_commands()
+                    f_cogs_cmds = '\n'.join(
+                        (["✧ " + c.name for c in cogs_cmds]))
+                        
+                    embed.add_field(name=x, value=f'{f_cogs_cmds}', inline=True)
             await ctx.send(embed=embed)
         else:
             if len(cog) > 1:
                 embed = discord.Embed(
                     title='Error!', description='Too many cogs!', color=0x437840)
+                embed.set_thumbnail(url=self.bot.user.avatar_url)
+                embed.set_footer(
+                    text=f"Author: {self.bot.appinfo.owner}", icon_url=self.bot.user.avatar_url)
+
                 await ctx.message.author.send('', embed=embed)
             else:
                 found = False
@@ -63,6 +58,9 @@ class ErrorCog(commands.Cog, name='Help'):
                                     scog_info += f'**{c.name}** - {c.help}\n'
                             embed.add_field(
                                 name=f'{cog[0]} Module - {self.bot.cogs[cog[0]].__doc__}', value=scog_info)
+                            embed.set_footer(
+                                text=f"Author: {self.bot.appinfo.owner}",
+                                icon_url=self.bot.user.avatar_url)
                             found = True
             if not found:
                 for x in self.bot.cogs:
@@ -72,6 +70,9 @@ class ErrorCog(commands.Cog, name='Help'):
                             embed = discord.Embed(color=0x437840)
                             embed.add_field(
                                 name=f'{c.name} - {c.help}', value=f'Proper Syntax:\n`{c.qualified_name} {c.signature}`')
+                            embed.set_footer(
+                                text=f"Author: {self.bot.appinfo.owner}",
+                                icon_url=self.bot.user.avatar_url)
 
                     found = True
                 if not found:
@@ -82,5 +83,25 @@ class ErrorCog(commands.Cog, name='Help'):
             await ctx.send(embed=embed)
 
 
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        try:
+            if hasattr(ctx.command, 'on_error'):
+                return
+            else:
+                embed = discord.Embed(
+                    title=f'Error in {ctx.command}', description=f'`{ctx.command.qualified_name} {ctx.command.signature}` \n{error}', color=0x43788)
+                embed.set_thumbnail(url=self.bot.user.avatar_url)
+
+                await ctx.send(embed=embed)
+                await ctx.message.add_reaction(emoji='❔')
+        except:
+            embed = discord.Embed(
+                title=f'Error in {ctx.command}', description=f'{error}', color=0x43788)
+            embed.set_thumbnail(url=self.bot.user.avatar_url)
+
+            await ctx.send(embed=embed)
+
+
 def setup(bot):
-    bot.add_cog(ErrorCog(bot))
+    bot.add_cog(CustomHelp(bot))
