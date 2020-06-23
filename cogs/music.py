@@ -59,47 +59,43 @@ class Music(commands.Cog):
 
     @commands.command()
     async def join(self, ctx, *, channel: discord.VoiceChannel):
-        """Tell bot to join specify voice channel"""
-        if ctx.voice_bot is not None:
-            return await ctx.voice_bot.move_to(channel)
+        if ctx.voice_client is not None:
+            return await ctx.voice_client.move_to(channel)
 
         await channel.connect()
 
     @commands.command()
     async def play(self, ctx, *, url):
-        """Play a song from URL"""
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop)
-            ctx.voice_bot.play(player, after=lambda e: print(
+            ctx.voice_client.play(player, after=lambda e: print(
                 'Player error: %s' % e) if e else None)
 
         await ctx.send('*Now playing:*  **{}**'.format(player.title))
 
     @commands.command()
     async def volume(self, ctx, volume: int):
-        """Change volume"""
-        if ctx.voice_bot is None:
+        if ctx.voice_client is None:
             return await ctx.send("Not connected to a voice channel.")
 
-        ctx.voice_bot.source.volume = volume / 100
+        ctx.voice_client.source.volume = volume / 100
         await ctx.send("*Changed volume to {}%*".format(volume))
 
     @commands.command()
     async def stop(self, ctx):
-        """Stop the music"""
-        await ctx.voice_bot.disconnect()
+        await ctx.voice_client.disconnect()
 
     @play.before_invoke
     async def ensure_voice(self, ctx):
-        if ctx.voice_bot is None:
+        if ctx.voice_client is None:
             if ctx.author.voice:
                 await ctx.author.voice.channel.connect()
             else:
                 await ctx.send("You are not connected to a voice channel.")
                 raise commands.CommandError(
                     "Author not connected to a voice channel.")
-        elif ctx.voice_bot.is_playing():
-            ctx.voice_bot.stop()
+        elif ctx.voice_client.is_playing():
+            ctx.voice_client.stop()
 
 
 def setup(bot):
