@@ -17,12 +17,19 @@ class Events(commands.Cog):
             await asyncio.sleep(20)
 
     @commands.Cog.listener()
+    async def on_guild_join(self, guild):
+        await self.bot.pg_con.execute("INSERT INTO guilds (id) VALUES ($1)", guild.id)
+
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild):
+        await self.bot.pg_con.execute("DELETE FROM guilds WHERE id = $1", guild.id)
+            
+    @commands.Cog.listener()
     async def on_ready(self):
         print(
             f'Ready: {self.bot.user} | Servers: {len(self.bot.guilds)}')
         self.bot.loop.create_task(self.status_task())
         self.bot.appinfo = await self.bot.application_info()
-
 
 def setup(bot):
     bot.add_cog(Events(bot))

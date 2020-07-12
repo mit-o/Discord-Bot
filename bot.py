@@ -1,17 +1,16 @@
 import discord
 import os
-import json
 from discord.ext import commands
+from config import BOT_TOKEN, BOT_PREFIX
+from config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
+import asyncpg
 
-with open("config.json") as config_file:
-    config = json.load(config_file)
-    TOKEN = config["bot_token"]
-    PREFIX = config["bot_prefix"]
-    COG_EXCEPT = config["cog_exception"]
 
-bot = commands.Bot(command_prefix=PREFIX)
+async def create_db_pool():
+    bot.pg_con = await asyncpg.create_pool(database=DB_NAME, user=DB_USER, password=DB_PASS)
+
+bot = commands.Bot(command_prefix=BOT_PREFIX)
 bot.remove_command("help")
-
 
 @bot.command()
 async def load(ctx, extension):
@@ -37,4 +36,5 @@ for filename in os.listdir('cogs'):
             print("{} cannot be loaded. [{}]".format(
                 f'cogs.{filename[:-3]}', error))
 
-bot.run(TOKEN)
+bot.loop.run_until_complete(create_db_pool())
+bot.run(BOT_TOKEN)

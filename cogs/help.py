@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from bot import COG_EXCEPT
+from config import COG_EXCEPTION
 
 
 class CustomHelp(commands.Cog, name='Help'):
@@ -28,14 +28,15 @@ class CustomHelp(commands.Cog, name='Help'):
                              icon_url='https://cdn.discordapp.com/attachments/596341948705407040/724748657924112454/610021821856743444.gif')
 
             for x in self.bot.cogs:
-                if x in COG_EXCEPT or len(self.bot.cogs[x].get_commands()) == 0:
+                if x in COG_EXCEPTION or len(self.bot.cogs[x].get_commands()) == 0:
                     pass
                 else:
                     cogs_cmds = self.bot.cogs[x].get_commands()
                     f_cogs_cmds = '\n'.join(
                         (["✧ " + c.name for c in cogs_cmds]))
-                        
-                    embed.add_field(name=x, value=f'{f_cogs_cmds}', inline=True)
+
+                    embed.add_field(
+                        name=x, value=f'{f_cogs_cmds}', inline=True)
             await ctx.send(embed=embed)
         else:
             if len(cog) > 1:
@@ -82,7 +83,6 @@ class CustomHelp(commands.Cog, name='Help'):
                     pass
             await ctx.send(embed=embed)
 
-
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         try:
@@ -97,7 +97,11 @@ class CustomHelp(commands.Cog, name='Help'):
                 await ctx.message.add_reaction(emoji='❔')
         except:
             embed = discord.Embed(
-                title=f'Error in {ctx.command}', description=f'{error}', color=0x43788)
+                title=f'Error in {ctx.command}',
+                description=f'{error}',
+                color=0x43788
+            )
+
             embed.set_thumbnail(url=self.bot.user.avatar_url)
 
             await ctx.send(embed=embed)
