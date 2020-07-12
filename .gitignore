@@ -5,5 +5,3 @@ cache/
 # Config file
 config.py
 
-#Database
-main.sqlite
